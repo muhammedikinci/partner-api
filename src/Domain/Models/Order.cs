@@ -10,12 +10,13 @@ namespace Domain.Models
     {
         public Customer Customer;
 
-        [BsonRepresentation(BsonType.Array)]
         public List<string> Products;
 
         public string Status;
 
         public string Notes;
+
+        public string PartnerId;
 
         public DateTime UpdatedAt;
     }

@@ -18,7 +18,8 @@ namespace Repository
 
         protected BaseRepository(IDatabaseService dbService)
         {
-            this.Collection = dbService.GetDatabase().GetCollection<T>(typeof(T).Name.ToLowerInvariant());
+            var data = typeof(T).Name.ToLowerInvariant();
+            this.Collection = dbService.GetDatabase().GetCollection<T>(data);
         }
 
         public virtual IQueryable<T> Get(Expression<Func<T, bool>> predicate = null)

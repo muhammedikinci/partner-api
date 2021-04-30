@@ -1,3 +1,4 @@
+using Persistence;
 using Persistence.Interfaces;
 using MongoDB.Driver;
 

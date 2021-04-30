@@ -14,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 using Persistence.Interfaces;
 using Persistence;
+using Repository;
+using Application;
 
 namespace WebApi
 {
@@ -28,7 +30,7 @@ namespace WebApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {            
             services.Configure<MongoDBSettings>(
                 Configuration.GetSection(nameof(MongoDBSettings))
             );
@@ -37,9 +39,10 @@ namespace WebApi
                 sp => sp.GetRequiredService<IOptions<MongoDBSettings>>().Value
             );
 
-            services.AddSingleton<DatabaseService>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
 
             services.RegisterRepositories();
+            services.RegisterApplicationServices();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
