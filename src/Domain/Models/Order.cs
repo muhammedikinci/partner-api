@@ -8,16 +8,17 @@ namespace Domain.Models
 {
     public class Order : Entity
     {
-        public Customer Customer;
+        public Customer Customer { get; set; }
 
-        public List<string> Products;
+        public List<string> Products { get; set; }
 
-        public string Status;
+        public string Status { get; set; }
 
-        public string Notes;
+        public string Notes { get; set; }
 
-        public string PartnerId;
+        public string PartnerId { get; set; }
 
-        public DateTime UpdatedAt;
+        [BsonDateTimeOptions]
+        public DateTime UpdatedAt { get; set; }
     }
 }
