@@ -40,9 +40,10 @@ namespace Application.Services
             return p != null;
         }
 
-        public bool Update(Partner partner)
+        public bool Update(string id, Partner partner)
         {
-            Partner p = partnerRepository.UpdateAsync(partner.Id, partner).Result;
+            partner.Id = id;
+            Partner p = partnerRepository.UpdateAsync(id, partner).Result;
             return p != null;
         }
 

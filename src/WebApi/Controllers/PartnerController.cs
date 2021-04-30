@@ -5,8 +5,8 @@ using Domain.Models;
 namespace WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class PartnerController : ControllerBase
+    [Route("api/partner")]
+    public class PartnerController : BaseController
     {
         private IPartnerService partnerService;
 
@@ -18,25 +18,43 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(partnerService.GetAll());
+            return SetResponse(partnerService.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(string id)
+        {
+            return SetResponse(partnerService.GetById(id));
         }
 
         [HttpPost]
         public IActionResult Create(Partner partner)
         {
-            return Ok(partnerService.Add(partner));
+            return SetResponse(partnerService.Add(partner));
         }
 
-        [HttpPut]
-        public IActionResult Update(Partner partner)
+        [HttpPut("{id}")]
+        public IActionResult Update(string id, Partner partner)
         {
-            return Ok(partnerService.Update(partner));
+            return SetResponse(partnerService.Update(id, partner));
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
-            return Ok(partnerService.Delete(id));
+            return SetResponse(partnerService.Delete(id));
+        }
+
+        [HttpGet("{id}/products")]
+        public IActionResult GetProducts(string id)
+        {
+            return SetResponse(partnerService.GetProducts(id));
+        }
+
+        [HttpGet("{id}/orders")]
+        public IActionResult GetOrders(string id)
+        {
+            return SetResponse(partnerService.GetOrders(id));
         }
     }
 }
