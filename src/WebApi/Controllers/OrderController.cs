@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
+using Application.Auth.Entities;
 
 namespace WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/order")]
     public class OrderController : BaseController
@@ -27,6 +30,7 @@ namespace WebApi.Controllers
             return SetResponse(orderService.GetById(id));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPost]
         public IActionResult Create(Order order)
         {
@@ -39,6 +43,7 @@ namespace WebApi.Controllers
             return SetResponse(orderService.Update(id, order));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {

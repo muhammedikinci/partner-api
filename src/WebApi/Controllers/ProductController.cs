@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
+using Application.Auth.Entities;
 
 namespace WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/product")]
     public class ProductController : BaseController
@@ -27,6 +30,7 @@ namespace WebApi.Controllers
             return SetResponse(productService.GetById(id));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPost]
         public IActionResult Create(Product product)
         {
@@ -39,6 +43,7 @@ namespace WebApi.Controllers
             return SetResponse(productService.Update(id, product));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {

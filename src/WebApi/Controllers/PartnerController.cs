@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
+using Application.Auth.Entities;
 
 namespace WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/partner")]
     public class PartnerController : BaseController
@@ -27,6 +30,7 @@ namespace WebApi.Controllers
             return SetResponse(partnerService.GetById(id));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPost]
         public IActionResult Create(Partner partner)
         {
@@ -39,6 +43,7 @@ namespace WebApi.Controllers
             return SetResponse(partnerService.Update(id, partner));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
