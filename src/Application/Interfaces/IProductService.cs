@@ -14,6 +14,7 @@ namespace Application.Interfaces
         Product GetById(string id);
         bool Add(Product product);
         bool Update(string id, Product product);
+        bool UpdateStock(string id, int stock);
         bool Delete(string id);
         Partner GetPartner(string id);
     }

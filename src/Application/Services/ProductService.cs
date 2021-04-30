@@ -45,6 +45,14 @@ namespace Application.Services
             return p != null;
         }
 
+        public bool UpdateStock(string id, int stock)
+        {
+            Product p = productRepository.GetByIdAsync(id).Result;
+            p.Stock = stock;
+            var updated = productRepository.UpdateAsync(id, p).Result;
+            return updated != null;
+        }
+
         public bool Delete(string id)
         {
             Product p = productRepository.DeleteAsync(id).Result;

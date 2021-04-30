@@ -37,10 +37,17 @@ namespace WebApi.Controllers
             return SetResponse(productService.Add(product));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public IActionResult Update(string id, Product product)
         {
             return SetResponse(productService.Update(id, product));
+        }
+
+        [HttpPut("setStock/{id}")]
+        public IActionResult UpdateStock(string id, int stock)
+        {
+            return SetResponse(productService.UpdateStock(id, stock));
         }
 
         [Authorize(Roles = Role.Admin)]
