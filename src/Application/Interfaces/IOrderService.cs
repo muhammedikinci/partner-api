@@ -11,11 +11,11 @@ namespace Application.Interfaces
     public interface IOrderService
     {
         IQueryable<Order> GetAll();
+        IQueryable<Order> GetAllByPartnerId();
         Order GetById(string id);
         bool Add(Order order);
         bool Update(string id, Order order);
         bool Delete(string id);
-        List<Product> GetProducts(string id);
         Partner GetPartner(string id);
     }
 }

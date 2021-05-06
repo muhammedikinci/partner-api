@@ -35,6 +35,12 @@ namespace WebApi.Controllers
             return SetResponse(userService.Add(user));
         }
 
+        [HttpPost("create-partner")]
+        public IActionResult CreateParter(Domain.Models.User user)
+        {
+            return SetResponse(userService.AddPartner(user));
+        }
+
         [HttpPut("{id}")]
         public IActionResult Update(string id, Domain.Models.User user)
         {

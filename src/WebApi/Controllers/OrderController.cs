@@ -18,6 +18,7 @@ namespace WebApi.Controllers
             this.orderService = orderService;
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -30,6 +31,12 @@ namespace WebApi.Controllers
             return SetResponse(orderService.GetById(id));
         }
 
+        [HttpGet("get-all-my-orders")]
+        public IActionResult GetAllByPartnerId()
+        {
+            return SetResponse(orderService.GetAllByPartnerId());
+        }
+
         [Authorize(Roles = Role.Admin)]
         [HttpPost]
         public IActionResult Create(Order order)
@@ -37,6 +44,7 @@ namespace WebApi.Controllers
             return SetResponse(orderService.Add(order));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public IActionResult Update(string id, Order order)
         {
@@ -48,12 +56,6 @@ namespace WebApi.Controllers
         public IActionResult Delete(string id)
         {
             return SetResponse(orderService.Delete(id));
-        }
-
-        [HttpGet("{id}/products")]
-        public IActionResult GetProducts(string id)
-        {
-            return SetResponse(orderService.GetProducts(id));
         }
 
         [HttpGet("{id}/partner")]

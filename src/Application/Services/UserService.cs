@@ -41,6 +41,7 @@ namespace Application.Services
             appUser.UserName = user.UserName;
             appUser.Name = user.Name;
             appUser.Role = user.Role;
+            appUser.PartnerId = user.PartnerId;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_appSettings.Secret);
@@ -49,7 +50,8 @@ namespace Application.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, appUser.Id.ToString()),
-                    new Claim(ClaimTypes.Role, appUser.Role)
+                    new Claim(ClaimTypes.Role, appUser.Role),
+                    new Claim(ClaimTypes.UserData, appUser.PartnerId),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -83,6 +85,18 @@ namespace Application.Services
 
         public bool Add(Domain.Models.User user)
         {
+            Domain.Models.User o = userRepository.AddAsync(user).Result;
+            return o != null;
+        }
+
+        public bool AddPartner(Domain.Models.User user)
+        {
+            MD5 md5Hash = MD5.Create();
+            string hashedPass = GetMd5Hash(md5Hash, user.Password);
+
+            user.Role = Role.User;
+            user.Password = hashedPass;
+
             Domain.Models.User o = userRepository.AddAsync(user).Result;
             return o != null;
         }

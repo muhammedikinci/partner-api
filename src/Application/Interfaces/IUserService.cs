@@ -12,6 +12,7 @@ namespace Application.Interfaces
         IQueryable<Domain.Models.User> GetAll();
         Domain.Models.User GetById(string id);
         bool Add(Domain.Models.User user);
+        bool AddPartner(Domain.Models.User user);
         bool Update(string id, Domain.Models.User user);
         bool Delete(string id);
     }
