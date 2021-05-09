@@ -13,6 +13,7 @@ namespace Application.Interfaces
         IQueryable<Product> GetAll();
         Product GetById(string id);
         bool Add(Product product);
+        bool UpdateOrCreate(Product product);
         bool Update(string id, Product product);
         bool UpdateStock(string id, int stock);
         bool Delete(string id);

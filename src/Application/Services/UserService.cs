@@ -103,8 +103,29 @@ namespace Application.Services
 
         public bool Update(string id, Domain.Models.User user)
         {
-            user.Id = id;
-            Domain.Models.User o = userRepository.UpdateAsync(id, user).Result;
+            var _user = userRepository.GetByIdAsync(id).Result;
+
+            if (_user == null) 
+                return false;
+
+            if (user.Password != null) {
+                MD5 md5Hash = MD5.Create();
+                string hashedPass = GetMd5Hash(md5Hash, user.Password);
+                _user.Password = hashedPass;
+            }
+
+            _user.Name = user.Name;
+            _user.UserName = user.UserName;
+            _user.PartnerId = user.PartnerId;
+            _user.TradeRegistryTitle = user.TradeRegistryTitle;
+            _user.RegistrationNumber = user.RegistrationNumber;
+            _user.Address = user.Address;
+            _user.OwnerName = user.OwnerName;
+            _user.MobileNumber = user.MobileNumber;
+            _user.CompanyPhoneNumber = user.CompanyPhoneNumber;
+            _user.Email = user.Email;
+
+            Domain.Models.User o = userRepository.UpdateAsync(id, _user).Result;
             return o != null;
         }
 

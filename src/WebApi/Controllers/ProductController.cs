@@ -38,6 +38,13 @@ namespace WebApi.Controllers
         }
 
         [Authorize(Roles = Role.Admin)]
+        [HttpPost("update-or-create")]
+        public IActionResult UpdateOrCreate(Product product)
+        {
+            return SetResponse(productService.UpdateOrCreate(product));
+        }
+
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public IActionResult Update(string id, Product product)
         {

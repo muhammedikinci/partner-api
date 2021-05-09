@@ -17,6 +17,13 @@ namespace WebApi.Controllers
             this.userService = userService;
         }
 
+        [Authorize(Roles = Role.Admin)]
+        [HttpGet("admin-check")]
+        public IActionResult AdminCheck()
+        {
+            return Ok(true);
+        }
+
         [HttpGet]
         public IActionResult GetAll()
         {

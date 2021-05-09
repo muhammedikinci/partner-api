@@ -38,6 +38,20 @@ namespace Application.Services
             return p != null;
         }
 
+        public bool UpdateOrCreate(Product product)
+        {
+            Product p = productRepository.Get(p => p.ProductId == product.ProductId).FirstOrDefault();
+            
+            if (p == null)
+            {
+                return this.Add(product);
+            }
+            else
+            {
+                return this.Update(p.Id, product);
+            }
+        }
+
         public bool Update(string id, Product product)
         {
             product.Id = id;
@@ -48,7 +62,7 @@ namespace Application.Services
         public bool UpdateStock(string id, int stock)
         {
             Product p = productRepository.GetByIdAsync(id).Result;
-            p.Stock = stock;
+            p.Quantity = stock.ToString();
             var updated = productRepository.UpdateAsync(id, p).Result;
             return updated != null;
         }
