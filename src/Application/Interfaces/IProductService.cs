@@ -11,12 +11,12 @@ namespace Application.Interfaces
     public interface IProductService
     {
         IQueryable<Product> GetAll();
+        IQueryable<Product> GetAllByPartnerId();
         Product GetById(string id);
         bool Add(Product product);
         bool UpdateOrCreate(Product product);
         bool Update(string id, Product product);
-        bool UpdateStock(string id, int stock);
+        bool UpdateStock(string id, Domain.ValueObjects.StockUpdate product);
         bool Delete(string id);
-        Partner GetPartner(string id);
     }
 }

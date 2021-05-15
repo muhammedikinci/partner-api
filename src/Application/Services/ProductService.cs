@@ -8,23 +8,45 @@ using Domain.Models;
 using Repository.Interfaces;
 using Repository.Repositories;
 using Application.Interfaces;
+using System.Security.Claims;
+using Application.Auth.Entities;
+using Microsoft.AspNetCore.Http;
+using Domain.ValueObjects;
+using Microsoft.Extensions.Options;
+using Application.Auth.Helpers;
 
 namespace Application.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IPartnerRepository partnerRepository;
+        private readonly IUserRepository userRepository;
         private readonly IProductRepository productRepository;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IRequestService requestService;
+        private readonly AppSettings appSettings;
 
-        public ProductService(IPartnerRepository partnerRepository, IProductRepository productRepository)
+        public ProductService(IUserRepository userRepository, IProductRepository productRepository, IHttpContextAccessor httpContextAccessor, IRequestService requestService, IOptions<AppSettings> appSettings)
         {
-            this.partnerRepository = partnerRepository;
+            this.userRepository = userRepository;
             this.productRepository = productRepository;
+            this.httpContextAccessor = httpContextAccessor;
+            this.requestService = requestService;
+            this.appSettings = appSettings.Value;
         }
 
         public IQueryable<Product> GetAll()
         {
             return productRepository.Get();
+        }
+
+        public IQueryable<Product> GetAllByPartnerId()
+        {
+            var user = GetUserDataFromToken();
+
+            if (user == null)
+                return null;
+
+            return productRepository.Get(o => o.PartnerId == user.PartnerId);
         }
 
         public Product GetById(string id)
@@ -59,12 +81,31 @@ namespace Application.Services
             return p != null;
         }
 
-        public bool UpdateStock(string id, int stock)
+        public bool UpdateStock(string id, StockUpdate stock)
         {
-            Product p = productRepository.GetByIdAsync(id).Result;
-            p.Quantity = stock.ToString();
+            var user = GetUserDataFromToken();
+
+            if (user == null)
+                return false;
+
+            Product p = productRepository.Get(p => p.Id == id && p.PartnerId == user.PartnerId).FirstOrDefault();
+            p.Quantity = stock.Stock;
             var updated = productRepository.UpdateAsync(id, p).Result;
-            return updated != null;
+
+            if (updated == null)
+            {
+                return false;
+            }
+
+            StockUpdatePost stockUpdatePost = new StockUpdatePost();
+
+            stockUpdatePost.Stock = stock.Stock;
+            stockUpdatePost.Token = appSettings.StockUpdaterAPI.Token;
+            stockUpdatePost.ProductId = p.ProductId;
+
+            requestService.Post<StockUpdatePost>(appSettings.StockUpdaterAPI.UpdateStockURL, stockUpdatePost);
+
+            return true;
         }
 
         public bool Delete(string id)
@@ -73,10 +114,12 @@ namespace Application.Services
             return p != null;
         }
 
-        public Partner GetPartner(string id)
+        public Domain.Models.User GetUserDataFromToken()
         {
-            Product product = productRepository.GetByIdAsync(id).Result;
-            return partnerRepository.GetByIdAsync(product.PartnerId).Result;
+            ClaimsIdentity identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var idClaim = identity.Claims.First(c => c.Type == ClaimTypes.Name);
+
+            return userRepository.GetByIdAsync(idClaim.Value).Result;
         }
     }
 }

@@ -42,6 +42,8 @@ namespace WebApi
                     .AllowAnyHeader();
             }));
 
+            services.AddHttpClient();
+
             services.Configure<MongoDBSettings>(
                 Configuration.GetSection(nameof(MongoDBSettings))
             );

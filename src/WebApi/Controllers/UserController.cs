@@ -24,36 +24,42 @@ namespace WebApi.Controllers
             return Ok(true);
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpGet]
         public IActionResult GetAll()
         {
             return SetResponse(userService.GetAll());
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpGet("{id}")]
         public IActionResult GetById(string id)
         {
             return SetResponse(userService.GetById(id));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPost]
         public IActionResult Create(Domain.Models.User user)
         {
             return SetResponse(userService.Add(user));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPost("create-partner")]
         public IActionResult CreateParter(Domain.Models.User user)
         {
             return SetResponse(userService.AddPartner(user));
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("{id}")]
         public IActionResult Update(string id, Domain.Models.User user)
         {
             return SetResponse(userService.Update(id, user));
         }
         
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {

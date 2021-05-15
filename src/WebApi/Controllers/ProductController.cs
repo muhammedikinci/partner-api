@@ -18,12 +18,20 @@ namespace WebApi.Controllers
             this.productService = productService;
         }
 
+        [Authorize(Roles = Role.Admin)]
         [HttpGet]
         public IActionResult GetAll()
         {
             return SetResponse(productService.GetAll());
         }
 
+        [HttpGet("get-all-my-products")]
+        public IActionResult GetAllByPartnerId()
+        {
+            return SetResponse(productService.GetAllByPartnerId());
+        }
+
+        [Authorize(Roles = Role.Admin)]
         [HttpGet("{id}")]
         public IActionResult GetById(string id)
         {
@@ -51,8 +59,8 @@ namespace WebApi.Controllers
             return SetResponse(productService.Update(id, product));
         }
 
-        [HttpPut("setStock/{id}")]
-        public IActionResult UpdateStock(string id, int stock)
+        [HttpPut("set-stock/{id}")]
+        public IActionResult UpdateStock(string id, Domain.ValueObjects.StockUpdate stock)
         {
             return SetResponse(productService.UpdateStock(id, stock));
         }
@@ -62,12 +70,6 @@ namespace WebApi.Controllers
         public IActionResult Delete(string id)
         {
             return SetResponse(productService.Delete(id));
-        }
-
-        [HttpGet("{id}/partner")]
-        public IActionResult GetPartner(string id)
-        {
-            return SetResponse(productService.GetPartner(id));
         }
     }
 }
