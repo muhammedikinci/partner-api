@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IProductRequestService, ProductRequestService>();
             return services;
         }
     }

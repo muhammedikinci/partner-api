@@ -12,6 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IProductRequestRepository, ProductRequestRepository>();
             return services;
         }
     }
