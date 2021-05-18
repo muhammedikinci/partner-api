@@ -31,19 +31,25 @@ namespace WebApi.Controllers
             return SetResponse(productRequestService.GetById(id));
         }
 
+        [HttpGet("my/{id}")]
+        public IActionResult GetByIdWithPartner(string id)
+        {
+            return SetResponse(productRequestService.GetByIdWithPartner(id));
+        }
+
         [HttpPost]
         public IActionResult Create(Domain.Models.ProductRequest productRequest)
         {
             return SetResponse(productRequestService.Add(productRequest));
         }
 
-        [HttpPost("get-all-my-requests")]
+        [HttpGet("get-all-my-requests")]
         public IActionResult GetAllMyRequests()
         {
             return SetResponse(productRequestService.GetAllMyRequests());
         }
 
-        [HttpPost("update-my-request")]
+        [HttpPut("my")]
         public IActionResult UpdateMyRequest(Domain.Models.ProductRequest productRequest)
         {
             return SetResponse(productRequestService.UpdateMyRequest(productRequest));

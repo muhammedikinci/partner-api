@@ -36,8 +36,31 @@ namespace Application.Services
             return productRequestRepository.GetByIdAsync(id).Result;
         }
 
+        public ProductRequest GetByIdWithPartner(string id)
+        {
+            var user = GetUserDataFromToken();
+
+            if (user == null)
+                return null;
+
+            return productRequestRepository.Get(p => p.PartnerId == user.PartnerId && p.Id == id).FirstOrDefault();
+        }
+
         public bool Add(ProductRequest productRequest)
         {
+            var user = GetUserDataFromToken();
+
+            if (user == null)
+                return false;
+
+            productRequest.PartnerId = user.PartnerId;
+            productRequest.RequestStatus = new Domain.ValueObjects.ProductRequest.ProductRequestStatus()
+            {
+                Type = "İnceleme Bekliyor",
+                Description = ""
+            };
+            productRequest.FixNecessary = false;
+
             ProductRequest p = productRequestRepository.AddAsync(productRequest).Result;
             return p != null;
         }
@@ -66,6 +89,13 @@ namespace Application.Services
 
             if (user.PartnerId != request.PartnerId)
                 return false;
+
+            if (!request.FixNecessary)
+                return false;
+
+            productRequest.PartnerId = request.PartnerId;
+            productRequest.RequestStatus = request.RequestStatus;
+            productRequest.FixNecessary = false;
 
             ProductRequest p = productRequestRepository.UpdateAsync(productRequest.Id, productRequest).Result;
             return p != null;
