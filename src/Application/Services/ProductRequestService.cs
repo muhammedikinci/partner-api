@@ -101,10 +101,9 @@ namespace Application.Services
             return p != null;
         }
 
-        public bool Update(string id, ProductRequest productRequest)
+        public bool Update(ProductRequest productRequest)
         {
-            productRequest.Id = id;
-            ProductRequest p = productRequestRepository.UpdateAsync(id, productRequest).Result;
+            ProductRequest p = productRequestRepository.UpdateAsync(productRequest.Id, productRequest).Result;
             return p != null;
         }
 

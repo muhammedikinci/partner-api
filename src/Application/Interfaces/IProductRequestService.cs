@@ -16,7 +16,7 @@ namespace Application.Interfaces
         bool Add(ProductRequest productRequest);
         IQueryable<ProductRequest> GetAllMyRequests();
         bool UpdateMyRequest(ProductRequest productRequest);
-        bool Update(string id, ProductRequest productRequest);
+        bool Update(ProductRequest productRequest);
         bool Delete(string id);
     }
 }

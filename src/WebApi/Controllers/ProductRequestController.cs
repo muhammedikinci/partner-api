@@ -56,10 +56,10 @@ namespace WebApi.Controllers
         }
 
         [Authorize(Roles = Role.Admin)]
-        [HttpPut("{id}")]
-        public IActionResult Update(string id, Domain.Models.ProductRequest productRequest)
+        [HttpPut]
+        public IActionResult Update(Domain.Models.ProductRequest productRequest)
         {
-            return SetResponse(productRequestService.Update(id, productRequest));
+            return SetResponse(productRequestService.Update(productRequest));
         }
         
         [Authorize(Roles = Role.Admin)]
