@@ -5,7 +5,7 @@ using Application.Auth.Entities;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles = Role.Admin)]
+    [Authorize]
     [ApiController]
     [Route("api/user")]
     public class UserController : BaseController
@@ -29,6 +29,12 @@ namespace WebApi.Controllers
         public IActionResult GetAll()
         {
             return SetResponse(userService.GetAll());
+        }
+
+        [HttpGet("get-my-data")]
+        public IActionResult GetMyData()
+        {
+            return SetResponse(userService.GetMyData());
         }
 
         [Authorize(Roles = Role.Admin)]
@@ -57,6 +63,12 @@ namespace WebApi.Controllers
         public IActionResult Update(string id, Domain.Models.User user)
         {
             return SetResponse(userService.Update(id, user));
+        }
+
+        [HttpPut("update-my-data")]
+        public IActionResult UpdateMyData(Domain.Models.User user)
+        {
+            return SetResponse(userService.UpdateMyData(user));
         }
         
         [Authorize(Roles = Role.Admin)]

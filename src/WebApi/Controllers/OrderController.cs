@@ -57,11 +57,5 @@ namespace WebApi.Controllers
         {
             return SetResponse(orderService.Delete(id));
         }
-
-        [HttpGet("{id}/partner")]
-        public IActionResult GetPartner(string id)
-        {
-            return SetResponse(orderService.GetPartner(id));
-        }
     }
 }

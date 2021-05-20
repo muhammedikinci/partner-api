@@ -16,6 +16,5 @@ namespace Application.Interfaces
         bool Add(Order order);
         bool Update(string id, Order order);
         bool Delete(string id);
-        Partner GetPartner(string id);
     }
 }

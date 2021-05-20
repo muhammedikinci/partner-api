@@ -16,15 +16,13 @@ namespace Application.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IPartnerRepository partnerRepository;
         private readonly IProductRepository productRepository;
         private readonly IOrderRepository orderRepository;
         private readonly IUserRepository userRepository;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public OrderService(IPartnerRepository partnerRepository, IProductRepository productRepository, IOrderRepository orderRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
+        public OrderService(IProductRepository productRepository, IOrderRepository orderRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
-            this.partnerRepository = partnerRepository;
             this.productRepository = productRepository;
             this.orderRepository = orderRepository;
             this.httpContextAccessor = httpContextAccessor;
@@ -86,12 +84,6 @@ namespace Application.Services
         {
             Order o = orderRepository.DeleteAsync(id).Result;
             return o != null;
-        }
-
-        public Partner GetPartner(string id)
-        {
-            Order order = orderRepository.GetByIdAsync(id).Result;
-            return partnerRepository.GetByIdAsync(order.PartnerId).Result;
         }
     }
 }

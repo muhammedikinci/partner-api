@@ -8,7 +8,6 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection RegisterRepositories(this IServiceCollection services)
         {
-            services.AddTransient<IPartnerRepository, PartnerRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IUserRepository, UserRepository>();

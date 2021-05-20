@@ -9,7 +9,6 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
             services.AddTransient<IRequestService, RequestService>();
-            services.AddTransient<IPartnerService, PartnerService>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IUserService, UserService>();

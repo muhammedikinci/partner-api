@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using Repository.Interfaces;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Services
 {
@@ -20,11 +21,13 @@ namespace Application.Services
     {
         private readonly IUserRepository userRepository;
         private readonly AppSettings _appSettings;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public UserService(IOptions<AppSettings> appSettings, IUserRepository userRepository)
+        public UserService(IOptions<AppSettings> appSettings, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
         {
             _appSettings = appSettings.Value;
             this.userRepository = userRepository;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public User Authenticate(string username, string password)
@@ -83,6 +86,16 @@ namespace Application.Services
             return userRepository.GetByIdAsync(id).Result;
         }
 
+        public Domain.Models.User GetMyData()
+        {
+            var user = GetUserDataFromToken();
+
+            if (user == null)
+                return null;
+
+            return userRepository.Get(u => u.Id == user.Id).FirstOrDefault();
+        }
+
         public bool Add(Domain.Models.User user)
         {
             Domain.Models.User o = userRepository.AddAsync(user).Result;
@@ -123,9 +136,39 @@ namespace Application.Services
             _user.OwnerName = user.OwnerName;
             _user.MobileNumber = user.MobileNumber;
             _user.CompanyPhoneNumber = user.CompanyPhoneNumber;
+            _user.TaxNumber = user.TaxNumber;
             _user.Email = user.Email;
 
             Domain.Models.User o = userRepository.UpdateAsync(id, _user).Result;
+            return o != null;
+        }
+
+        public bool UpdateMyData(Domain.Models.User user)
+        {
+            var _user = GetUserDataFromToken();
+
+            if (_user == null)
+                return false;
+
+            if (user.Password != null) {
+                MD5 md5Hash = MD5.Create();
+                string hashedPass = GetMd5Hash(md5Hash, user.Password);
+                _user.Password = hashedPass;
+            }
+
+            _user.Name = user.Name;
+            _user.UserName = user.UserName;
+            _user.PartnerId = user.PartnerId;
+            _user.TradeRegistryTitle = user.TradeRegistryTitle;
+            _user.RegistrationNumber = user.RegistrationNumber;
+            _user.Address = user.Address;
+            _user.OwnerName = user.OwnerName;
+            _user.MobileNumber = user.MobileNumber;
+            _user.CompanyPhoneNumber = user.CompanyPhoneNumber;
+            _user.TaxNumber = user.TaxNumber;
+            _user.Email = user.Email;
+
+            Domain.Models.User o = userRepository.UpdateAsync(_user.Id, _user).Result;
             return o != null;
         }
 
@@ -133,6 +176,14 @@ namespace Application.Services
         {
             Domain.Models.User o = userRepository.DeleteAsync(id).Result;
             return o != null;
+        }
+
+        public Domain.Models.User GetUserDataFromToken()
+        {
+            ClaimsIdentity identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            var idClaim = identity.Claims.First(c => c.Type == ClaimTypes.Name);
+
+            return userRepository.GetByIdAsync(idClaim.Value).Result;
         }
     }
 }
