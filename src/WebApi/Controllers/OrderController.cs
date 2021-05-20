@@ -57,5 +57,12 @@ namespace WebApi.Controllers
         {
             return SetResponse(orderService.Delete(id));
         }
+
+        [Authorize(Roles = Role.Admin)]
+        [HttpDelete("delete-many-orders-by-id/{orderId}")]
+        public IActionResult DeleteManyOrdersById(string orderId)
+        {
+            return SetResponse(orderService.DeleteManyOrdersByOrderId(orderId));
+        }
     }
 }

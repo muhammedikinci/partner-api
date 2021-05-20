@@ -85,5 +85,15 @@ namespace Application.Services
             Order o = orderRepository.DeleteAsync(id).Result;
             return o != null;
         }
+
+        public bool DeleteManyOrdersByOrderId(string orderId)
+        {
+            var deleteResult = orderRepository.DeleteManyOrdersByOrderId(orderId).Result;
+
+            if (deleteResult.DeletedCount == 0)
+                return false;
+
+            return true;
+        }
     }
 }

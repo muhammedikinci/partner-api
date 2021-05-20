@@ -13,6 +13,7 @@ namespace Application.Interfaces
         IQueryable<Order> GetAll();
         IQueryable<Order> GetAllByPartnerId();
         Order GetById(string id);
+        bool DeleteManyOrdersByOrderId(string orderId);
         bool Add(Order order);
         bool Update(string id, Order order);
         bool Delete(string id);
