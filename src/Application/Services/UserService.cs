@@ -14,6 +14,8 @@ using Repository.Interfaces;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Application.AppException.Exceptions;
+using Application.AppException;
 
 namespace Application.Services
 {
@@ -150,10 +152,20 @@ namespace Application.Services
             if (_user == null)
                 return false;
 
-            if (user.Password != null) {
-                MD5 md5Hash = MD5.Create();
-                string hashedPass = GetMd5Hash(md5Hash, user.Password);
-                _user.Password = hashedPass;
+            if (user.Password != null) 
+            {
+                string trimmedPassword = user.Password.Trim();
+
+                if (!String.IsNullOrEmpty(trimmedPassword))
+                {
+                    MD5 md5Hash = MD5.Create();
+                    string hashedPass = GetMd5Hash(md5Hash, user.Password);
+                    _user.Password = hashedPass;
+                }
+                else
+                {
+                    throw new PasswordException(ExceptionConstants.PASSWORD_WHITESPACES);
+                }
             }
 
             _user.Name = user.Name;

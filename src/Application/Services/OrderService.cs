@@ -11,6 +11,7 @@ using Application.Interfaces;
 using System.Security.Claims;
 using Application.Auth.Entities;
 using Microsoft.AspNetCore.Http;
+using Application.AppException.Exceptions;
 
 namespace Application.Services
 {

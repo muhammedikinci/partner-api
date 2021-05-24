@@ -20,6 +20,7 @@ using Application.Auth.Helpers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Application.AppException;
 
 namespace WebApi
 {
@@ -58,7 +59,9 @@ namespace WebApi
             services.RegisterApplicationServices();
             services.AddHttpContextAccessor();
 
-            services.AddControllers();
+            services.AddControllers(options => {
+                options.Filters.Add(new HttpResponseExceptionFilter());
+            });
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
