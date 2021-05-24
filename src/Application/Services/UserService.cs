@@ -39,7 +39,7 @@ namespace Application.Services
             Domain.Models.User user = userRepository.Get(x => x.UserName == username && x.Password == hashedPass).FirstOrDefault();
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
  
             User appUser = new User();
             appUser.Id = user.Id;
@@ -93,7 +93,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
 
             return userRepository.Get(u => u.Id == user.Id).FirstOrDefault();
         }
@@ -121,7 +121,7 @@ namespace Application.Services
             var _user = userRepository.GetByIdAsync(id).Result;
 
             if (_user == null) 
-                return false;
+                throw new UserNotValidException();
 
             if (user.Password != null) {
                 MD5 md5Hash = MD5.Create();
@@ -150,7 +150,7 @@ namespace Application.Services
             var _user = GetUserDataFromToken();
 
             if (_user == null)
-                return false;
+                throw new UserNotValidException();
 
             if (user.Password != null) 
             {

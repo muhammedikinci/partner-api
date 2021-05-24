@@ -10,6 +10,7 @@ using Repository.Repositories;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Application.AppException.Exceptions;
 
 namespace Application.Services
 {
@@ -41,7 +42,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
 
             return productRequestRepository.Get(p => p.PartnerId == user.PartnerId && p.Id == id).FirstOrDefault();
         }
@@ -51,7 +52,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return false;
+                throw new UserNotValidException();
 
             productRequest.PartnerId = user.PartnerId;
             productRequest.RequestStatus = new Domain.ValueObjects.ProductRequest.ProductRequestStatus()
@@ -70,7 +71,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
 
             return productRequestRepository.Get(p => p.PartnerId == user.PartnerId);
         }
@@ -80,7 +81,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return false;
+                throw new UserNotValidException();
 
             var request = productRequestRepository.Get(p => p.Id == productRequest.Id).FirstOrDefault();
 

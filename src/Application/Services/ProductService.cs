@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 using Application.Auth.Helpers;
+using Application.AppException.Exceptions;
 
 namespace Application.Services
 {
@@ -44,7 +45,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
 
             return productRepository.Get(o => o.PartnerId == user.PartnerId);
         }
@@ -86,7 +87,7 @@ namespace Application.Services
             var user = GetUserDataFromToken();
 
             if (user == null)
-                return false;
+                throw new UserNotValidException();
 
             Product p = productRepository.Get(p => p.Id == id && p.PartnerId == user.PartnerId).FirstOrDefault();
             p.Quantity = stock.Stock;

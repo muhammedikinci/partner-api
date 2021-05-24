@@ -50,7 +50,7 @@ namespace Application.Services
             var user = userRepository.GetByIdAsync(idClaim.Value).Result;
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
 
             return orderRepository.GetAsync(o => o.Id == id && o.PartnerId == user.PartnerId).Result;
         }
@@ -63,7 +63,7 @@ namespace Application.Services
             var user = userRepository.GetByIdAsync(idClaim.Value).Result;
 
             if (user == null)
-                return null;
+                throw new UserNotValidException();
 
             return orderRepository.Get(o => o.PartnerId == user.PartnerId);
         }
