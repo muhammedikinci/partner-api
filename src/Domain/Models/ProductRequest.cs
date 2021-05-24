@@ -1,26 +1,27 @@
 using Domain.ValueObjects.ProductRequest;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Models
 {
     public class ProductRequest : Entity
     {
-        [BsonRequiredAttribute]
+        [Required]
         public string PartnerId { get; set; }
-
-        [BsonRequiredAttribute]
+        
         public ProductRequestDetail ProductDetail { get; set; }
 
-        [BsonRequiredAttribute]
+        [Required]
         public string PredictedStock { get; set; }
 
-        [BsonRequiredAttribute]
+        [Required]
         public string ReadyForShippingDate { get; set; }
 
-        [BsonRequiredAttribute]
         public List<ProductRequestImage> Images { get; set; }
         public ProductRequestStatus RequestStatus { get; set; }
+
+        [Required]
         public bool FixNecessary { get; set; }
     }
 }
