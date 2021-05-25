@@ -15,6 +15,7 @@ using Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 using Application.Auth.Helpers;
 using Application.AppException.Exceptions;
+using Application.AppException;
 
 namespace Application.Services
 {
@@ -119,6 +120,9 @@ namespace Application.Services
         {
             ClaimsIdentity identity = httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             var idClaim = identity.Claims.First(c => c.Type == ClaimTypes.Name);
+
+            if (idClaim == null)
+                throw new UserNotValidException(ExceptionConstants.USER_CLAIM_NOT_VALID);
 
             return userRepository.GetByIdAsync(idClaim.Value).Result;
         }

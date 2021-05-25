@@ -6,18 +6,18 @@ using Application.AppException;
 
 namespace Application.AppException.Exceptions
 {
-    public class PasswordException : HttpResponseException
+    public class PermissionDeniedException : HttpResponseException
     {
         private string _message;
 
-        public PasswordException(string message) : base(StatusCodes.Status400BadRequest)
+        public PermissionDeniedException(string message) : base(StatusCodes.Status400BadRequest)
         {
             _message = message;
         }
 
-        public PasswordException() : base(StatusCodes.Status400BadRequest)
+        public PermissionDeniedException() : base(StatusCodes.Status400BadRequest)
         {
-            _message = ExceptionConstants.PASSWORD_REQUIRED;
+            _message = ExceptionConstants.PERMISSON_DENIED;
         }
 
         public override string Message => _message;

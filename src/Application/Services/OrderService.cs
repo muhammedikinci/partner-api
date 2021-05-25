@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Application.Auth.Entities;
 using Microsoft.AspNetCore.Http;
 using Application.AppException.Exceptions;
+using Application.AppException;
 
 namespace Application.Services
 {
@@ -42,17 +43,29 @@ namespace Application.Services
             var idClaim = identity.Claims.First(c => c.Type == ClaimTypes.Name);
             
             if (roleClaim == null)
-                return null;
+                throw new UserNotValidException(ExceptionConstants.USER_CLAIM_NOT_VALID);
 
             if (roleClaim.Value == Role.Admin)
-                return orderRepository.GetByIdAsync(id).Result;
+            {
+                Order _order = orderRepository.GetByIdAsync(id).Result;
+
+                if (_order == null)
+                    throw new OrderNotFoundException();
+                else
+                    return _order;
+            }
 
             var user = userRepository.GetByIdAsync(idClaim.Value).Result;
 
             if (user == null)
                 throw new UserNotValidException();
 
-            return orderRepository.GetAsync(o => o.Id == id && o.PartnerId == user.PartnerId).Result;
+            Order order = orderRepository.GetAsync(o => o.Id == id && o.PartnerId == user.PartnerId).Result;
+
+            if (order == null)
+                throw new OrderNotFoundException();
+
+            return order;
         }
 
         public IQueryable<Order> GetAllByPartnerId()

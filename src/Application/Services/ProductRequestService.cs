@@ -11,6 +11,7 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Application.AppException.Exceptions;
+using Application.AppException;
 
 namespace Application.Services
 {
@@ -34,7 +35,12 @@ namespace Application.Services
 
         public ProductRequest GetById(string id)
         {
-            return productRequestRepository.GetByIdAsync(id).Result;
+            ProductRequest productRequest = productRequestRepository.GetByIdAsync(id).Result;
+
+            if (productRequest == null)
+                throw new NotFoundException();
+
+            return productRequest;
         }
 
         public ProductRequest GetByIdWithPartner(string id)
@@ -44,7 +50,12 @@ namespace Application.Services
             if (user == null)
                 throw new UserNotValidException();
 
-            return productRequestRepository.Get(p => p.PartnerId == user.PartnerId && p.Id == id).FirstOrDefault();
+            ProductRequest productRequest = productRequestRepository.Get(p => p.PartnerId == user.PartnerId && p.Id == id).FirstOrDefault();
+
+            if (productRequest == null)
+                throw new NotFoundException();
+
+            return productRequest;
         }
 
         public bool Add(ProductRequest productRequest)
@@ -86,13 +97,13 @@ namespace Application.Services
             var request = productRequestRepository.Get(p => p.Id == productRequest.Id).FirstOrDefault();
 
             if (request == null)
-                return false;
+                throw new NotFoundException();
 
             if (user.PartnerId != request.PartnerId)
-                return false;
+                throw new PermissionDeniedException();
 
             if (!request.FixNecessary)
-                return false;
+                throw new PermissionDeniedException();
 
             productRequest.PartnerId = request.PartnerId;
             productRequest.RequestStatus = request.RequestStatus;

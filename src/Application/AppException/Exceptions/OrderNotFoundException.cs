@@ -6,18 +6,18 @@ using Application.AppException;
 
 namespace Application.AppException.Exceptions
 {
-    public class PasswordException : HttpResponseException
+    public class OrderNotFoundException : HttpResponseException
     {
         private string _message;
 
-        public PasswordException(string message) : base(StatusCodes.Status400BadRequest)
+        public OrderNotFoundException(string message) : base(StatusCodes.Status400BadRequest)
         {
             _message = message;
         }
 
-        public PasswordException() : base(StatusCodes.Status400BadRequest)
+        public OrderNotFoundException() : base(StatusCodes.Status400BadRequest)
         {
-            _message = ExceptionConstants.PASSWORD_REQUIRED;
+            _message = ExceptionConstants.ORDER_NOT_FOUND;
         }
 
         public override string Message => _message;

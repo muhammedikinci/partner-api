@@ -85,7 +85,12 @@ namespace Application.Services
 
         public Domain.Models.User GetById(string id)
         {
-            return userRepository.GetByIdAsync(id).Result;
+            Domain.Models.User user = userRepository.GetByIdAsync(id).Result;
+
+            if (user == null)
+                throw new NotFoundException();
+            
+            return user;
         }
 
         public Domain.Models.User GetMyData()
@@ -95,7 +100,12 @@ namespace Application.Services
             if (user == null)
                 throw new UserNotValidException();
 
-            return userRepository.Get(u => u.Id == user.Id).FirstOrDefault();
+            Domain.Models.User _user = userRepository.Get(u => u.Id == user.Id).FirstOrDefault();
+
+            if (_user == null)
+                throw new NotFoundException();
+
+            return _user;
         }
 
         public bool Add(Domain.Models.User user)
