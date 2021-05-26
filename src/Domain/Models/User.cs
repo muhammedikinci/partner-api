@@ -1,3 +1,5 @@
+using System;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
 
@@ -41,5 +43,10 @@ namespace Domain.Models
 
         [Required]
         public string Email { get; set; }
+
+        public int LoginAttemps { get; set; }
+
+        [BsonRepresentation(BsonType.DateTime)]
+        public DateTime LastLoginAttempsAt { get; set; }
     }
 }

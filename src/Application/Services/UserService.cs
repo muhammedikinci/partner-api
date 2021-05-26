@@ -37,15 +37,31 @@ namespace Application.Services
 
         public User Authenticate(string username, string password)
         {
+            Domain.Models.User preUserData = userRepository.Get(x => x.UserName == username).FirstOrDefault();
+
+            if (preUserData == null)
+                throw new NotFoundException();
+
+            var attempTimeCheck = DateTime.UtcNow - preUserData.LastLoginAttempsAt;
+
+            if (preUserData.LoginAttemps > 4 && attempTimeCheck.TotalSeconds < 120)
+                throw new UserBlockedException();
+            else if (preUserData.LoginAttemps > 4 && attempTimeCheck.TotalSeconds > 120)
+                SetLoginAttemps(preUserData, 0);
+
             MD5 md5Hash = MD5.Create();
             string hashedPass = GetMd5Hash(md5Hash, password);
             Domain.Models.User user = userRepository.Get(x => x.UserName == username && x.Password == hashedPass).FirstOrDefault();
 
             if (user == null)
             {
+                SetLoginAttemps(preUserData, preUserData.LoginAttemps + 1);
                 logger.LogInformation("USERNAME:{0} LOGIN FAILED", username);
                 throw new UserNotValidException();
             }
+
+            if (user.LoginAttemps > 0)
+                SetLoginAttemps(user, 0);
  
             User appUser = new User();
             appUser.Id = user.Id;
@@ -202,7 +218,7 @@ namespace Application.Services
             _user.TaxNumber = user.TaxNumber;
             _user.Email = user.Email;
 
-            logger.LogInformation("User Self Update ID:{0}", id);
+            logger.LogInformation("User Self Update ID:{0}", _user.Id);
 
             Domain.Models.User o = userRepository.UpdateAsync(_user.Id, _user).Result;
             return o != null;
@@ -220,6 +236,13 @@ namespace Application.Services
             var idClaim = identity.Claims.First(c => c.Type == ClaimTypes.Name);
 
             return userRepository.GetByIdAsync(idClaim.Value).Result;
+        }
+
+        public void SetLoginAttemps(Domain.Models.User user, int attemp)
+        {
+            user.LoginAttemps = attemp;
+            user.LastLoginAttempsAt = DateTime.UtcNow;
+            userRepository.UpdateAsync(user.Id, user);
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Application.AppException
         public static readonly string ORDER_NOT_FOUND = "Sipariş bulunamadı.";
         public static readonly string NOT_FOUND = "İstenilen öğe bulunamadı.";
         public static readonly string PERMISSON_DENIED = "Yetkisiz erişim.";
+        public static readonly string USER_BLOCKED = "Çok fazla başarısız deneme gerçekleştirildi. Lütfen daha sonra tekrar deneyiniz.";
     }
 }
