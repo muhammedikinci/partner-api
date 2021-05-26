@@ -44,9 +44,9 @@ namespace Domain.Models
         [Required]
         public string Email { get; set; }
 
-        public int LoginAttemps { get; set; }
+        public int LoginAttempts { get; set; }
 
         [BsonRepresentation(BsonType.DateTime)]
-        public DateTime LastLoginAttempsAt { get; set; }
+        public DateTime LastLoginAttemptsAt { get; set; }
     }
 }

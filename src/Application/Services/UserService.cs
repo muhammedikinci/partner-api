@@ -42,12 +42,12 @@ namespace Application.Services
             if (preUserData == null)
                 throw new NotFoundException();
 
-            var attempTimeCheck = DateTime.UtcNow - preUserData.LastLoginAttempsAt;
+            var attempTimeCheck = DateTime.UtcNow - preUserData.LastLoginAttemptsAt;
 
-            if (preUserData.LoginAttemps > 4 && attempTimeCheck.TotalSeconds < 120)
+            if (preUserData.LoginAttempts > 4 && attempTimeCheck.TotalSeconds < 120)
                 throw new UserBlockedException();
-            else if (preUserData.LoginAttemps > 4 && attempTimeCheck.TotalSeconds > 120)
-                SetLoginAttemps(preUserData, 0);
+            else if (preUserData.LoginAttempts > 4 && attempTimeCheck.TotalSeconds > 120)
+                SetLoginAttempts(preUserData, 0);
 
             MD5 md5Hash = MD5.Create();
             string hashedPass = GetMd5Hash(md5Hash, password);
@@ -55,13 +55,13 @@ namespace Application.Services
 
             if (user == null)
             {
-                SetLoginAttemps(preUserData, preUserData.LoginAttemps + 1);
+                SetLoginAttempts(preUserData, preUserData.LoginAttempts + 1);
                 logger.LogInformation("USERNAME:{0} LOGIN FAILED", username);
                 throw new UserNotValidException();
             }
 
-            if (user.LoginAttemps > 0)
-                SetLoginAttemps(user, 0);
+            if (user.LoginAttempts > 0)
+                SetLoginAttempts(user, 0);
  
             User appUser = new User();
             appUser.Id = user.Id;
@@ -238,10 +238,10 @@ namespace Application.Services
             return userRepository.GetByIdAsync(idClaim.Value).Result;
         }
 
-        public void SetLoginAttemps(Domain.Models.User user, int attemp)
+        public void SetLoginAttempts(Domain.Models.User user, int attemp)
         {
-            user.LoginAttemps = attemp;
-            user.LastLoginAttempsAt = DateTime.UtcNow;
+            user.LoginAttempts = attemp;
+            user.LastLoginAttemptsAt = DateTime.UtcNow;
             userRepository.UpdateAsync(user.Id, user);
         }
     }
