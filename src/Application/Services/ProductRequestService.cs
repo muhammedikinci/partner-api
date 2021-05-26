@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Application.AppException.Exceptions;
 using Application.AppException;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -20,12 +21,14 @@ namespace Application.Services
         private readonly IProductRequestRepository productRequestRepository;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUserRepository userRepository;
+        private readonly ILogger<ProductService> logger;
 
-        public ProductRequestService(IProductRequestRepository productRequestRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
+        public ProductRequestService(IProductRequestRepository productRequestRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, ILogger<ProductService> logger)
         {
             this.productRequestRepository = productRequestRepository;
             this.httpContextAccessor = httpContextAccessor;
             this.userRepository = userRepository;
+            this.logger = logger;
         }
 
         public IQueryable<ProductRequest> GetAll()
@@ -100,10 +103,16 @@ namespace Application.Services
                 throw new NotFoundException();
 
             if (user.PartnerId != request.PartnerId)
+            {
+                logger.LogInformation("Permission Denied | Different partner id | received partner id:{0}", request.PartnerId);
                 throw new PermissionDeniedException();
+            }
 
             if (!request.FixNecessary)
+            {
+                logger.LogInformation("Permission Denied | Fix Necessary | received partner id:{0}", request.PartnerId);
                 throw new PermissionDeniedException();
+            }
 
             productRequest.PartnerId = request.PartnerId;
             productRequest.RequestStatus = request.RequestStatus;

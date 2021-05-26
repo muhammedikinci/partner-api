@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Application.Auth.Helpers;
 using Application.AppException.Exceptions;
 using Application.AppException;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -26,14 +27,16 @@ namespace Application.Services
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IRequestService requestService;
         private readonly AppSettings appSettings;
+        private readonly ILogger<ProductService> logger;
 
-        public ProductService(IUserRepository userRepository, IProductRepository productRepository, IHttpContextAccessor httpContextAccessor, IRequestService requestService, IOptions<AppSettings> appSettings)
+        public ProductService(IUserRepository userRepository, IProductRepository productRepository, IHttpContextAccessor httpContextAccessor, IRequestService requestService, IOptions<AppSettings> appSettings, ILogger<ProductService> logger)
         {
             this.userRepository = userRepository;
             this.productRepository = productRepository;
             this.httpContextAccessor = httpContextAccessor;
             this.requestService = requestService;
             this.appSettings = appSettings.Value;
+            this.logger = logger;
         }
 
         public IQueryable<Product> GetAll()
@@ -68,10 +71,12 @@ namespace Application.Services
             
             if (p == null)
             {
+                logger.LogInformation("Product Add id:{0}", product.ProductId);
                 return this.Add(product);
             }
             else
             {
+                logger.LogInformation("Product Update id:{0}", product.ProductId);
                 return this.Update(p.Id, product);
             }
         }
@@ -106,6 +111,8 @@ namespace Application.Services
             stockUpdatePost.ProductId = p.ProductId;
 
             requestService.Post<StockUpdatePost>(appSettings.StockUpdaterAPI.UpdateStockURL, stockUpdatePost);
+
+            logger.LogInformation("Stock Update ProductID:{0}", p.ProductId);
 
             return true;
         }

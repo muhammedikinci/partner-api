@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Application.AppException.Exceptions;
 using Application.AppException;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
@@ -24,12 +25,14 @@ namespace Application.Services
         private readonly IUserRepository userRepository;
         private readonly AppSettings _appSettings;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly ILogger<UserService> logger;
 
-        public UserService(IOptions<AppSettings> appSettings, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
+        public UserService(IOptions<AppSettings> appSettings, IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, ILogger<UserService> logger)
         {
             _appSettings = appSettings.Value;
             this.userRepository = userRepository;
             this.httpContextAccessor = httpContextAccessor;
+            this.logger = logger;
         }
 
         public User Authenticate(string username, string password)
@@ -39,7 +42,10 @@ namespace Application.Services
             Domain.Models.User user = userRepository.Get(x => x.UserName == username && x.Password == hashedPass).FirstOrDefault();
 
             if (user == null)
+            {
+                logger.LogInformation("USERNAME:{0} LOGIN FAILED", username);
                 throw new UserNotValidException();
+            }
  
             User appUser = new User();
             appUser.Id = user.Id;
@@ -64,6 +70,8 @@ namespace Application.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             appUser.Token = tokenHandler.WriteToken(token);
 
+            logger.LogInformation("USERNAME:{0} ROLE:{1} TOKEN REQUEST SUCCESS", username, appUser.Role);
+
             return appUser.WithoutPassword();
         }
 
@@ -87,9 +95,11 @@ namespace Application.Services
         {
             Domain.Models.User user = userRepository.GetByIdAsync(id).Result;
 
-            if (user == null)
+            if (user == null) {
+                logger.LogInformation("User Not Found Exception ID:{0}", id);
                 throw new NotFoundException();
-            
+            }
+
             return user;
         }
 
@@ -151,6 +161,8 @@ namespace Application.Services
             _user.TaxNumber = user.TaxNumber;
             _user.Email = user.Email;
 
+            logger.LogInformation("User Updated ID:{0}", id);
+
             Domain.Models.User o = userRepository.UpdateAsync(id, _user).Result;
             return o != null;
         }
@@ -189,6 +201,8 @@ namespace Application.Services
             _user.CompanyPhoneNumber = user.CompanyPhoneNumber;
             _user.TaxNumber = user.TaxNumber;
             _user.Email = user.Email;
+
+            logger.LogInformation("User Self Update ID:{0}", id);
 
             Domain.Models.User o = userRepository.UpdateAsync(_user.Id, _user).Result;
             return o != null;
