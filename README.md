@@ -92,3 +92,9 @@ Requires data in database for tests. You can run first add tests for the data.
 cd partner-api/src/Tests
 dotnet test
 ```
+
+---
+
+Logging: NLog
+
+Database: MongoDB
