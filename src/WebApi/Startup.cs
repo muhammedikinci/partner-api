@@ -45,9 +45,20 @@ namespace WebApi
 
             services.AddHttpClient();
 
-            services.Configure<MongoDBSettings>(
-                Configuration.GetSection(nameof(MongoDBSettings))
-            );
+            var testProp = Configuration.GetValue<string>("TestProp");
+
+            if (testProp == "true")
+            {
+                services.Configure<MongoDBSettings>(
+                    Configuration.GetSection("MongoDBTestSettings")
+                );
+            }
+            else
+            {
+                services.Configure<MongoDBSettings>(
+                    Configuration.GetSection(nameof(MongoDBSettings))
+                );
+            }
 
             services.AddSingleton<IDatabaseSettings>(
                 sp => sp.GetRequiredService<IOptions<MongoDBSettings>>().Value
