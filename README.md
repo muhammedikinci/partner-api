@@ -4,7 +4,7 @@ PartnerAPI is a mini supplier management system for e-commerce platforms. Develo
 
 You will need to make various development in the e-commerce platform used to connect the features of PartnerAPI. You can contact [me](https://github.com/muhammedikinci) via e-mail for necessary development.
 
-The API already has a react-frontend. You can access it [here](https://github.com/partner-frontend).
+The API already has a react-frontend. You can access it [here](https://github.com/muhammedikinci/partner-frontend).
 
 ## Project Features
 
